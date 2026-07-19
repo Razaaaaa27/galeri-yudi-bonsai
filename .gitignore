@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Frontend build (akan di-build ulang di Railway)
+frontend/dist/
+frontend/node_modules/
+
+# Misc
+mongodb.txt

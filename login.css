@@ -1,0 +1,530 @@
+/* ===================================================
+   GALERI YUDI — Login Page CSS
+   Premium Glassmorphism Design
+   =================================================== */
+
+/* ---------- Variables ---------- */
+:root {
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-white: #ffffff;
+  --color-bg: #f5f5f7;
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  --color-border: #e8e8ed;
+  --color-green-deep: #1b4332;
+  --color-green-primary: #2d6a4f;
+  --color-green-medium: #40916c;
+  --color-green-light: #52b788;
+  --color-green-pale: #d8f3dc;
+  --color-green-ghost: #f0faf4;
+  --color-red: #dc2626;
+  --color-red-bg: #fef2f2;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.14);
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a1a10 0%, #1b4332 25%, #2d6a4f 50%, #1b4332 75%, #0a1a10 100%);
+  background-size: 400% 400%;
+  animation: bgShift 15s ease infinite;
+  overflow: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+input { font-family: inherit; }
+
+/* ---------- Background Animation ---------- */
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- Animated Orbs ---------- */
+.login-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.login-bg__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+
+.login-bg__orb--1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(82, 183, 136, 0.6), transparent);
+  top: -150px;
+  right: -100px;
+  animation: orbFloat1 8s ease-in-out infinite;
+}
+
+.login-bg__orb--2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(45, 106, 79, 0.5), transparent);
+  bottom: -100px;
+  left: -100px;
+  animation: orbFloat2 10s ease-in-out infinite;
+}
+
+.login-bg__orb--3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(216, 243, 220, 0.3), transparent);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbFloat3 12s ease-in-out infinite;
+}
+
+@keyframes orbFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-60px, 40px) scale(1.1); }
+  66% { transform: translate(30px, -30px) scale(0.9); }
+}
+
+@keyframes orbFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80px, -50px) scale(1.15); }
+}
+
+@keyframes orbFloat3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.4; }
+}
+
+/* ---------- Floating Leaves ---------- */
+.login-bg__leaf {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.15;
+  animation: leafDrift linear infinite;
+  pointer-events: none;
+}
+
+.login-bg__leaf--1 { top: -5%; left: 10%; animation-duration: 15s; animation-delay: 0s; font-size: 2rem; }
+.login-bg__leaf--2 { top: -5%; left: 30%; animation-duration: 18s; animation-delay: 3s; font-size: 1.5rem; }
+.login-bg__leaf--3 { top: -5%; left: 55%; animation-duration: 20s; animation-delay: 7s; font-size: 1.8rem; }
+.login-bg__leaf--4 { top: -5%; left: 75%; animation-duration: 16s; animation-delay: 5s; font-size: 1.2rem; }
+.login-bg__leaf--5 { top: -5%; left: 90%; animation-duration: 22s; animation-delay: 10s; font-size: 1.6rem; }
+
+@keyframes leafDrift {
+  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+  10% { opacity: 0.15; }
+  90% { opacity: 0.15; }
+  100% { transform: translateY(110vh) rotate(720deg) translateX(100px); opacity: 0; }
+}
+
+/* ===================================================
+   LOGIN WRAPPER & CARD
+   =================================================== */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  padding: 24px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: saturate(180%) blur(40px);
+  -webkit-backdrop-filter: saturate(180%) blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px) scale(0.96);
+}
+
+@keyframes cardEntrance {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- Header ---------- */
+.login-card__header {
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.login-card__back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all var(--transition-fast);
+}
+
+.login-card__back:hover {
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.login-card__back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.login-card__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.login-card__logo-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-green-light), var(--color-green-primary));
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.4);
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { box-shadow: 0 8px 24px rgba(45, 106, 79, 0.4); }
+  50% { box-shadow: 0 8px 40px rgba(82, 183, 136, 0.6); }
+}
+
+.login-card__logo-icon svg {
+  width: 28px;
+  height: 28px;
+  color: var(--color-white);
+}
+
+.login-card__logo-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-white);
+  letter-spacing: -0.02em;
+}
+
+.login-card__badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: rgba(82, 183, 136, 0.2);
+  border: 1px solid rgba(82, 183, 136, 0.3);
+  color: var(--color-green-light);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.login-card__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-white);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.login-card__subtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+/* ===================================================
+   LOGIN FORM
+   =================================================== */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-form__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-form__label svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.6;
+}
+
+.login-form__input {
+  padding: 14px 18px;
+  font-size: 0.9375rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  outline: none;
+  transition: all var(--transition-fast);
+  width: 100%;
+}
+
+.login-form__input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.login-form__input:focus {
+  border-color: var(--color-green-light);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+}
+
+/* Password wrapper */
+.login-form__password-wrap {
+  position: relative;
+}
+
+.login-form__password-wrap .login-form__input {
+  padding-right: 48px;
+}
+
+.login-form__eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color var(--transition-fast);
+}
+
+.login-form__eye:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-form__eye svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Error message */
+.login-form__error {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: var(--radius-sm);
+  color: #fca5a5;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  animation: errorShake 0.5s ease;
+}
+
+.login-form__error.active {
+  display: flex;
+}
+
+.login-form__error svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* Submit button */
+.login-form__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 32px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-white);
+  background: linear-gradient(135deg, var(--color-green-primary), var(--color-green-medium));
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-primary);
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.login-form__submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: none;
+}
+
+.login-form__submit:hover::before {
+  transform: translateX(100%);
+  transition: transform 0.6s ease;
+}
+
+.login-form__submit:hover {
+  background: linear-gradient(135deg, var(--color-green-deep), var(--color-green-primary));
+  box-shadow: 0 8px 32px rgba(45, 106, 79, 0.4);
+  transform: translateY(-2px);
+}
+
+.login-form__submit:active {
+  transform: translateY(0);
+}
+
+.login-form__submit-arrow {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--transition-fast);
+}
+
+.login-form__submit:hover .login-form__submit-arrow {
+  transform: translateX(4px);
+}
+
+/* Loader */
+.login-form__submit-loader {
+  display: none;
+}
+
+.login-form__submit-loader svg {
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.login-form__submit.loading .login-form__submit-text,
+.login-form__submit.loading .login-form__submit-arrow {
+  display: none;
+}
+
+.login-form__submit.loading .login-form__submit-loader {
+  display: flex;
+}
+
+.login-form__submit.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* ===================================================
+   FOOTER
+   =================================================== */
+.login-card__footer {
+  margin-top: 28px;
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.login-card__footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color var(--transition-fast);
+}
+
+.login-card__footer-link:hover {
+  color: var(--color-green-light);
+}
+
+.login-card__footer-link svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ===================================================
+   RESPONSIVE
+   =================================================== */
+@media (max-width: 520px) {
+  .login-wrapper {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 32px 24px;
+  }
+
+  .login-card__title {
+    font-size: 1.25rem;
+  }
+
+  .login-bg__orb--1 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .login-bg__orb--2 {
+    width: 250px;
+    height: 250px;
+  }
+}
