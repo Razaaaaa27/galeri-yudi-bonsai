@@ -1,11 +1,11 @@
 /* ===================================================
    GALERI YUDI — Express Server
-   SQLite + JWT Auth + Multer Image Upload
+   MongoDB Atlas + JWT Auth + Multer Image Upload
    =================================================== */
 
 require('dotenv').config();
 const express = require('express');
-const Database = require('better-sqlite3');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -63,57 +64,57 @@ const upload = multer({
 });
 
 // ─────────────────────────────────────────────────────
-// SQLITE CONNECTION & SCHEMA
+// MONGODB CONNECTION & SCHEMA
 // ─────────────────────────────────────────────────────
-const DB_PATH = process.env.DATABASE_PATH || path.join(__dirname, 'galeriyudi.db');
-const db = new Database(DB_PATH);
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/galeriyudi';
 
-// Enable WAL mode for better performance
-db.pragma('journal_mode = WAL');
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1);
+  });
 
-// Create products table if not exists
-db.exec(`
-  CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category TEXT NOT NULL CHECK(category IN ('paket', 'pot')),
-    name TEXT NOT NULL,
-    price INTEGER NOT NULL DEFAULT 0,
-    stock INTEGER NOT NULL DEFAULT 0,
-    description TEXT DEFAULT '',
-    image TEXT DEFAULT '',
-    createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-    updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
-  )
-`);
+// Product Schema
+const productSchema = new mongoose.Schema({
+  category: {
+    type: String,
+    required: true,
+    enum: ['paket', 'pot'],
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    default: 0,
+  },
+  stock: {
+    type: Number,
+    default: 0,
+  },
+  description: {
+    type: String,
+    default: '',
+  },
+  image: {
+    type: String,
+    default: '',
+  },
+}, {
+  timestamps: true, // auto createdAt & updatedAt
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret._id;
+      delete ret.__v;
+      return ret;
+    },
+  },
+});
 
-console.log('✅ Connected to SQLite database:', DB_PATH);
-
-// ─────────────────────────────────────────────────────
-// PREPARED STATEMENTS (for performance)
-// ─────────────────────────────────────────────────────
-const stmts = {
-  getAll: db.prepare('SELECT * FROM products ORDER BY createdAt DESC'),
-  getById: db.prepare('SELECT * FROM products WHERE id = ?'),
-  insert: db.prepare(`
-    INSERT INTO products (category, name, price, stock, description, image, createdAt, updatedAt)
-    VALUES (@category, @name, @price, @stock, @description, @image, @createdAt, @updatedAt)
-  `),
-  update: db.prepare(`
-    UPDATE products 
-    SET category = @category, name = @name, price = @price, stock = @stock, 
-        description = @description, updatedAt = @updatedAt
-    WHERE id = @id
-  `),
-  updateWithImage: db.prepare(`
-    UPDATE products 
-    SET category = @category, name = @name, price = @price, stock = @stock, 
-        description = @description, image = @image, updatedAt = @updatedAt
-    WHERE id = @id
-  `),
-  updateStock: db.prepare('UPDATE products SET stock = ?, updatedAt = ? WHERE id = ?'),
-  deleteById: db.prepare('DELETE FROM products WHERE id = ?'),
-  count: db.prepare('SELECT COUNT(*) as count FROM products'),
-};
+const Product = mongoose.model('Product', productSchema);
 
 // ─────────────────────────────────────────────────────
 // AUTH MIDDLEWARE
@@ -152,7 +153,6 @@ app.post('/api/login', (req, res) => {
       return res.status(401).json({ error: 'Username atau password salah.' });
     }
 
-    // Compare password (plain text comparison since stored in .env)
     if (password !== process.env.ADMIN_PASSWORD) {
       return res.status(401).json({ error: 'Username atau password salah.' });
     }
@@ -184,10 +184,10 @@ app.post('/api/auth/verify', authMiddleware, (req, res) => {
 // PRODUCT ROUTES (Public)
 // ─────────────────────────────────────────────────────
 
-// Get all products (public — for landing page)
-app.get('/api/products', (req, res) => {
+// Get all products
+app.get('/api/products', async (req, res) => {
   try {
-    const products = stmts.getAll.all();
+    const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
     console.error('Get products error:', err);
@@ -196,9 +196,9 @@ app.get('/api/products', (req, res) => {
 });
 
 // Get single product
-app.get('/api/products/:id', (req, res) => {
+app.get('/api/products/:id', async (req, res) => {
   try {
-    const product = stmts.getById.get(req.params.id);
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ error: 'Produk tidak ditemukan.' });
     }
@@ -213,8 +213,8 @@ app.get('/api/products/:id', (req, res) => {
 // PRODUCT ROUTES (Admin — Protected)
 // ─────────────────────────────────────────────────────
 
-// Create product (with image upload)
-app.post('/api/products', authMiddleware, upload.single('image'), (req, res) => {
+// Create product
+app.post('/api/products', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { category, name, price, stock, description } = req.body;
 
@@ -222,20 +222,14 @@ app.post('/api/products', authMiddleware, upload.single('image'), (req, res) => 
       return res.status(400).json({ error: 'Nama dan kategori produk wajib diisi.' });
     }
 
-    const now = new Date().toISOString();
-    const productData = {
+    const product = await Product.create({
       category,
       name,
       price: parseInt(price) || 0,
       stock: parseInt(stock) || 0,
       description: description || '',
       image: req.file ? `/uploads/${req.file.filename}` : '',
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const result = stmts.insert.run(productData);
-    const product = stmts.getById.get(result.lastInsertRowid);
+    });
 
     res.status(201).json({ message: 'Produk berhasil ditambahkan!', product });
   } catch (err) {
@@ -245,41 +239,35 @@ app.post('/api/products', authMiddleware, upload.single('image'), (req, res) => 
 });
 
 // Update product
-app.put('/api/products/:id', authMiddleware, upload.single('image'), (req, res) => {
+app.put('/api/products/:id', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { category, name, price, stock, description } = req.body;
-    const now = new Date().toISOString();
 
-    const updateData = {
-      id: parseInt(req.params.id),
-      category,
-      name,
-      price: parseInt(price) || 0,
-      stock: parseInt(stock) || 0,
-      description: description || '',
-      updatedAt: now,
-    };
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Produk tidak ditemukan.' });
+    }
 
-    // Only update image if new file uploaded
+    // Update fields
+    product.category = category || product.category;
+    product.name = name || product.name;
+    product.price = parseInt(price) || product.price;
+    product.stock = parseInt(stock) ?? product.stock;
+    product.description = description ?? product.description;
+
+    // Handle new image upload
     if (req.file) {
-      // Delete old image if it's in uploads folder
-      const oldProduct = stmts.getById.get(req.params.id);
-      if (oldProduct && oldProduct.image && oldProduct.image.startsWith('/uploads/')) {
-        const oldPath = path.join(__dirname, oldProduct.image);
+      // Delete old image
+      if (product.image && product.image.startsWith('/uploads/')) {
+        const oldPath = path.join(__dirname, product.image);
         if (fs.existsSync(oldPath)) {
           fs.unlinkSync(oldPath);
         }
       }
-      updateData.image = `/uploads/${req.file.filename}`;
-      stmts.updateWithImage.run(updateData);
-    } else {
-      stmts.update.run(updateData);
+      product.image = `/uploads/${req.file.filename}`;
     }
 
-    const product = stmts.getById.get(req.params.id);
-    if (!product) {
-      return res.status(404).json({ error: 'Produk tidak ditemukan.' });
-    }
+    await product.save();
 
     res.json({ message: 'Produk berhasil diperbarui!', product });
   } catch (err) {
@@ -289,9 +277,9 @@ app.put('/api/products/:id', authMiddleware, upload.single('image'), (req, res) 
 });
 
 // Delete product
-app.delete('/api/products/:id', authMiddleware, (req, res) => {
+app.delete('/api/products/:id', authMiddleware, async (req, res) => {
   try {
-    const product = stmts.getById.get(req.params.id);
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ error: 'Produk tidak ditemukan.' });
     }
@@ -304,7 +292,7 @@ app.delete('/api/products/:id', authMiddleware, (req, res) => {
       }
     }
 
-    stmts.deleteById.run(req.params.id);
+    await Product.findByIdAndDelete(req.params.id);
     res.json({ message: 'Produk berhasil dihapus.' });
   } catch (err) {
     console.error('Delete product error:', err);
@@ -313,20 +301,18 @@ app.delete('/api/products/:id', authMiddleware, (req, res) => {
 });
 
 // Update stock only
-app.patch('/api/products/:id/stock', authMiddleware, (req, res) => {
+app.patch('/api/products/:id/stock', authMiddleware, async (req, res) => {
   try {
     const { delta } = req.body;
-    const product = stmts.getById.get(req.params.id);
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ error: 'Produk tidak ditemukan.' });
     }
 
-    const newStock = Math.max(0, product.stock + (delta || 0));
-    const now = new Date().toISOString();
-    stmts.updateStock.run(newStock, now, req.params.id);
+    product.stock = Math.max(0, product.stock + (delta || 0));
+    await product.save();
 
-    const updated = stmts.getById.get(req.params.id);
-    res.json({ message: `Stok diperbarui: ${updated.stock}`, product: updated });
+    res.json({ message: `Stok diperbarui: ${product.stock}`, product });
   } catch (err) {
     console.error('Update stock error:', err);
     res.status(500).json({ error: 'Gagal memperbarui stok.' });
@@ -336,12 +322,11 @@ app.patch('/api/products/:id/stock', authMiddleware, (req, res) => {
 // ─────────────────────────────────────────────────────
 // SEED DEFAULT PRODUCTS (on first run)
 // ─────────────────────────────────────────────────────
-function seedProducts() {
+async function seedProducts() {
   try {
-    const { count } = stmts.count.get();
+    const count = await Product.countDocuments();
     if (count === 0) {
       console.log('📦 Seeding default products...');
-      const now = new Date().toISOString();
       const defaults = [
         {
           category: 'paket',
@@ -350,8 +335,6 @@ function seedProducts() {
           stock: 5,
           description: 'Bonsai beringin dewasa dengan akar gantung eksotis, dipadukan pot keramik putih minimalis berglaze halus.',
           image: 'assets/images/product-beringin.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'paket',
@@ -360,8 +343,6 @@ function seedProducts() {
           stock: 3,
           description: 'Maple Jepang dengan dedaunan merah-hijau yang memukau. Pot tanah liat cokelat tua dengan aksen klasik.',
           image: 'assets/images/product-maple.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'paket',
@@ -370,8 +351,6 @@ function seedProducts() {
           stock: 8,
           description: 'Bonsai serut dengan daun kecil rapat yang mudah dirawat. Pot keramik abu-abu elegant dengan finishing matte.',
           image: 'assets/images/product-serut.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'paket',
@@ -380,8 +359,6 @@ function seedProducts() {
           stock: 4,
           description: 'Juniper cascading klasik dengan karakter batang berpilin. Pot keramik rectangular cokelat tua yang kokoh.',
           image: 'assets/images/product-juniper.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'paket',
@@ -390,8 +367,6 @@ function seedProducts() {
           stock: 6,
           description: 'Bonsai cemara tegak dengan cabang berlapis indah. Pot keramik glazed biru-abu yang menambah kesan tenang.',
           image: 'assets/images/product-cemara.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'pot',
@@ -400,8 +375,6 @@ function seedProducts() {
           stock: 15,
           description: 'Pot keramik bulat berwarna putih polos dengan finishing glaze halus. Cocok untuk bonsai berukuran kecil-sedang.',
           image: 'assets/images/product-beringin.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'pot',
@@ -410,8 +383,6 @@ function seedProducts() {
           stock: 20,
           description: 'Pot tanah liat oval dengan warna cokelat natural. Material tebal dan kokoh, desain tradisional Jepang.',
           image: 'assets/images/product-maple.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'pot',
@@ -420,8 +391,6 @@ function seedProducts() {
           stock: 10,
           description: 'Pot keramik persegi panjang berwarna abu-abu dengan finishing matte premium. Elegan untuk bonsai formal.',
           image: 'assets/images/product-serut.png',
-          createdAt: now,
-          updatedAt: now,
         },
         {
           category: 'pot',
@@ -430,18 +399,10 @@ function seedProducts() {
           stock: 12,
           description: 'Pot keramik bulat dengan glazed biru-abu yang unik. Memberikan kesan tenang dan natural.',
           image: 'assets/images/product-cemara.png',
-          createdAt: now,
-          updatedAt: now,
         },
       ];
 
-      const insertMany = db.transaction((products) => {
-        for (const p of products) {
-          stmts.insert.run(p);
-        }
-      });
-
-      insertMany(defaults);
+      await Product.insertMany(defaults);
       console.log('✅ Default products seeded successfully!');
     }
   } catch (err) {
@@ -469,16 +430,16 @@ if (fs.existsSync(frontendDist)) {
 }
 
 // ─────────────────────────────────────────────────────
-// GRACEFUL SHUTDOWN — close SQLite connection
+// GRACEFUL SHUTDOWN
 // ─────────────────────────────────────────────────────
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down...');
-  db.close();
+  await mongoose.connection.close();
   process.exit(0);
 });
 
-process.on('SIGTERM', () => {
-  db.close();
+process.on('SIGTERM', async () => {
+  await mongoose.connection.close();
   process.exit(0);
 });
 

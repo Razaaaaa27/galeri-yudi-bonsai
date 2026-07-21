@@ -20,14 +20,11 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# SQLite database
-*.db
-*.db-shm
-*.db-wal
-
-# Frontend build (akan di-build ulang di Railway)
+# Frontend build (rebuilt on deploy)
 frontend/dist/
 frontend/node_modules/
 
-# Misc
-mongodb.txt
+# SQLite (no longer used)
+*.db
+*.db-shm
+*.db-wal
