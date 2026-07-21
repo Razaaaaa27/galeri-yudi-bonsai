@@ -463,9 +463,8 @@ if (fs.existsSync(frontendDist)) {
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 } else {
-  // Fallback to old HTML files during development
   app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.status(200).send('Galeri Yudi API is running. Frontend not built yet — run: cd frontend && npm run build');
   });
 }
 
