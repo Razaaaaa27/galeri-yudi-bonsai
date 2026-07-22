@@ -34,6 +34,28 @@
   flex-shrink: 0;
 }
 
+/* Brand name & tagline */
+.footer__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer__brand-name {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.224px;
+  margin: 0;
+}
+
+.footer__brand-tagline {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .footer__social {
   display: flex;
   flex-direction: row;
