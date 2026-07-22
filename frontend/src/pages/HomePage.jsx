@@ -139,7 +139,7 @@ export default function HomePage() {
             </div>
 
             <div className="hero__image reveal reveal-delay-2">
-              <img src="/assets/images/hero-bonsai1.jpeg" alt="Bonsai premium dalam pot keramik" width="560" height="560" />
+              <img src="/assets/images/homepage.png" alt="Bonsai premium dalam pot keramik" width="560" height="560" />
             </div>
           </div>
         </div>

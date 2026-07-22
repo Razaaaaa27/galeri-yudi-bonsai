@@ -1,5 +1,4 @@
 import './Footer.css';
-import nametagImg from '../assets/images/nametag.jpeg';
 
 const WA_NUMBER = '6281219477977';
 
@@ -11,11 +10,6 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__col">
             <div className="footer__brand-row">
-              <img
-                src={nametagImg}
-                alt="Galeri Yudi"
-                className="footer__brand-logo"
-              />
               <div className="footer__social">
                 <a href="https://www.instagram.com/galeri_yudi/" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Instagram">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -25,7 +19,7 @@ export default function Footer() {
                   </svg>
                   <span>Instagram</span>
                 </a>
-                <a href="facebook.com/share/18uphiWryT/" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Facebook">
+                <a href="https://www.facebook.com/yudi.anima?rdid=zVXnZt8S4icOgv4A&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18uphiWryT%2F#" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Facebook">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                   </svg>
@@ -98,14 +92,6 @@ export default function Footer() {
           <span>&copy; {new Date().getFullYear()} Galeri Yudi. All rights reserved.</span>
           <div className="footer__bottom-right">
             <span>Crafted with 🌿 for plant lovers</span>
-            {/* <img
-              src={nametagImg}
-              alt="Nametag Galeri Yudi"
-              className="footer__nametag"
-              loading="lazy"
-              width="28"
-              height="28"
-            /> */}
           </div>
         </div>
       </div>
