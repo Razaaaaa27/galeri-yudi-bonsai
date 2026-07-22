@@ -7,7 +7,7 @@ import './HomePage.css';
 
 const WA_URL = 'https://wa.me/6281219477977?text=Halo%2C%20saya%20ingin%20konsultasi%20memilih%20paket%20bonsai%20yang%20cocok';
 
-/* ── Default products (fallback) ── */
+/* ── Default products (fallback when API unavailable) ── */
 const DEFAULT_PRODUCTS = [
   { id: '1', category: 'paket', name: 'Paket Serenity — Bonsai Beringin + Pot Keramik Putih', price: 850000, stock: 5, description: 'Bonsai beringin dewasa dengan akar gantung eksotis.', image: '/assets/images/product-beringin.png' },
   { id: '2', category: 'paket', name: 'Paket Zen Garden — Bonsai Maple Jepang + Pot Tanah Liat', price: 1250000, stock: 3, description: 'Maple Jepang dengan dedaunan merah-hijau yang memukau.', image: '/assets/images/product-maple.png' },
