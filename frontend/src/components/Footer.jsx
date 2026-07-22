@@ -47,8 +47,8 @@ export default function Footer() {
             <ul className="footer__links">
               <li><span className="footer__link">Jl. Raya Bonsai No. 123</span></li>
               <li><span className="footer__link">Indonesia</span></li>
-              <li><span className="footer__link">Senin — Sabtu</span></li>
-              <li><span className="footer__link">08:00 — 17:00 WIB</span></li>
+              <li><span className="footer__link">Senin - Sabtu</span></li>
+              <li><span className="footer__link">08:00 - 17:00 WIB</span></li>
             </ul>
           </div>
 

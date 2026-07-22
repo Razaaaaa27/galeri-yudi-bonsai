@@ -201,10 +201,10 @@ export default function HomePage() {
             </div>
             <div className="about__content reveal reveal-delay-2">
               <span className="about__label">Tentang Kami</span>
-              <h2 className="about__title">Lebih dari Sekadar Tanaman — Ini adalah Seni Hidup</h2>
+              <h2 className="about__title">Lebih dari Sekadar Tanaman, Ini adalah Seni Hidup</h2>
               <p className="about__text">
                 Di balik setiap bonsai yang kami kirim, ada proses panjang penuh ketelitian.
-                Mulai dari pemilihan bibit, pembentukan batang, hingga pencocokan dengan pot yang tepat —
+                Mulai dari pemilihan bibit, pembentukan batang, hingga pencocokan dengan pot yang tepat,
                 semuanya dilakukan dengan standar yang sama: kesempurnaan.
               </p>
               <p className="about__text">
@@ -237,7 +237,7 @@ export default function HomePage() {
             <span className="section__label">Panduan</span>
             <h2 className="section__title">Cara Merawat Bonsai Anda</h2>
             <p className="section__subtitle">
-              Bonsai bukan tanaman yang sulit dirawat — cukup perhatikan empat hal dasar ini.
+              Bonsai bukan tanaman yang sulit dirawat, cukup perhatikan empat hal dasar ini.
             </p>
           </div>
           <div className="care__grid">
