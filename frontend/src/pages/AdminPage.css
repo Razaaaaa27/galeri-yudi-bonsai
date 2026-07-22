@@ -459,9 +459,17 @@
   flex-shrink: 0;
 }
 
-.table__stock-dot--ok { background: #10b981; }
-.table__stock-dot--low { background: #f59e0b; }
-.table__stock-dot--empty { background: #ef4444; }
+.table__stock-dot--ok {
+  background: #10b981;
+}
+
+.table__stock-dot--low {
+  background: #f59e0b;
+}
+
+.table__stock-dot--empty {
+  background: #ef4444;
+}
 
 /* ── Table Actions ── */
 .table__actions {
@@ -846,6 +854,7 @@
 }
 
 @media (max-width: 768px) {
+
   /* Sidebar off-canvas */
   .sidebar {
     transform: translateX(-100%);
