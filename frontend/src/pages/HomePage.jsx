@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
@@ -90,16 +90,46 @@ export default function HomePage() {
                 Bonsai. Pot.<br />
                 <span>Satu Karya Utuh.</span>
               </h1>
+
               <p className="hero__subtitle">
                 Setiap paket kami menggabungkan bonsai pilihan dengan pot keramik yang serasi,
                 dirancang harmonis, siap menjadi pusat perhatian di ruang Anda.
               </p>
+
+              {/* ── GO GREEN TAGLINE ── */}
+              <div className="hero__tagline">
+                <div className="hero__tagline-bar" />
+                <div className="hero__tagline-body">
+                  <div className="hero__tagline-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
+                      <path d="M17 8C8 10 5.9 16.17 3.82 19.34L5.71 20l.96-1.32C7.81 19.77 9.5 20 11 20c5.5 0 9-4 9-9 0-3-1.6-4.8-3-6z" />
+                      <path d="M3.82 19.34C4 17 4.5 13.5 8 11" />
+                    </svg>
+                  </div>
+                  <div className="hero__tagline-text">
+                    <span className="hero__tagline-label">GO GREEN</span>
+                    <span className="hero__tagline-main">
+                      Tidak harus pohon besar, bisa dimulai dari{' '}
+                      <strong>tanaman hias mini</strong> yang menghiasi teras rumah Anda.
+                    </span>
+                  </div>
+                  {/* <span className="hero__tagline-badge" aria-hidden="true">Go Green</span> */}
+                </div>
+              </div>
+
               <div className="hero__actions">
                 <a href="#koleksi" className="btn btn--primary btn--large">
                   Lihat Koleksi
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </a>
-                <a href="https://wa.me/6281219477977?text=Halo%2C%20saya%20tertarik%20dengan%20koleksi%20bonsai" target="_blank" rel="noopener noreferrer" className="btn btn--secondary btn--large">
+                <a
+                  href="https://wa.me/6281219477977?text=Halo%2C%20saya%20tertarik%20dengan%20koleksi%20bonsai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn--secondary btn--large"
+                >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                   </svg>
@@ -107,8 +137,9 @@ export default function HomePage() {
                 </a>
               </div>
             </div>
+
             <div className="hero__image reveal reveal-delay-2">
-              <img src="/assets/images/hero-bonsai.png" alt="Bonsai premium dalam pot keramik" width="560" height="560" />
+              <img src="/assets/images/hero-bonsai1.jpeg" alt="Bonsai premium dalam pot keramik" width="560" height="560" />
             </div>
           </div>
         </div>
@@ -252,10 +283,14 @@ export default function HomePage() {
                   {tip.icon === 'circle-sun' ? (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="5" />
-                      <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                      <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                     </svg>
                   ) : (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -288,7 +323,9 @@ export default function HomePage() {
               <div className={`testimonial-card reveal reveal-delay-${i + 1}`} key={t.name}>
                 <div className="testimonial-card__stars">
                   {[...Array(5)].map((_, j) => (
-                    <svg key={j} viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                    <svg key={j} viewBox="0 0 24 24">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
                   ))}
                 </div>
                 <p className="testimonial-card__text">{t.text}</p>
@@ -311,7 +348,7 @@ export default function HomePage() {
           <div className="reveal">
             <h2 className="cta-section__title">Punya Bonsai Favorit?<br />Konsultasi Dulu, Gratis.</h2>
             <p className="cta-section__subtitle">
-              Ceritakan ruang Anda, kami bantu pilihkan paket bonsai yang paling cocok. Langsung chat — tanpa komitmen.
+              Ceritakan ruang Anda, kami bantu pilihkan paket bonsai yang paling cocok. Langsung chat, tanpa komitmen.
             </p>
             <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--large">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

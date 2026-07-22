@@ -90,8 +90,103 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   letter-spacing: 0.011em;
-  margin-bottom: 40px;
+  margin-bottom: 0;
   max-width: 480px;
+}
+
+/* ── GO GREEN TAGLINE ── */
+.hero__tagline {
+  display: flex;
+  align-items: stretch;
+  margin-top: 20px;
+  margin-bottom: 32px;
+  max-width: 480px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid #3B6D11;
+  background: #EAF3DE;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.hero__tagline:hover {
+  border-color: #639922;
+  box-shadow: 0 6px 24px rgba(59, 109, 17, 0.18);
+}
+
+/* Garis aksen vertikal kiri */
+.hero__tagline-bar {
+  width: 6px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #97C459 0%, #3B6D11 100%);
+}
+
+/* Area konten tagline */
+.hero__tagline-body {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 16px 13px 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Lingkaran ikon */
+.hero__tagline-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #639922;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #EAF3DE;
+}
+
+/* Wrapper teks */
+.hero__tagline-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Label kecil GO GREEN */
+.hero__tagline-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #27500A;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Teks utama */
+.hero__tagline-main {
+  font-size: 14px;
+  color: #173404;
+  line-height: 1.55;
+}
+
+.hero__tagline-main strong {
+  color: #3B6D11;
+  font-weight: 600;
+}
+
+/* Pill badge kanan */
+.hero__tagline-badge {
+  flex-shrink: 0;
+  align-self: center;
+  background: #639922;
+  color: #EAF3DE;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 5px 12px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .hero__actions {
@@ -144,8 +239,8 @@
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border);
   transition: transform var(--transition-base),
-              box-shadow var(--transition-base),
-              border-color var(--transition-base);
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
   overflow: hidden;
   position: relative;
 }
@@ -157,7 +252,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
+  background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.4) 50%, transparent 60%);
   transform: translateX(-100%);
   transition: none;
   pointer-events: none;
@@ -279,7 +374,7 @@
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border);
   transition: transform var(--transition-base),
-              box-shadow var(--transition-base);
+    box-shadow var(--transition-base);
 }
 
 .care-card:hover {
@@ -330,7 +425,7 @@
   padding: 32px;
   border: 1px solid var(--color-border);
   transition: transform var(--transition-base),
-              box-shadow var(--transition-base);
+    box-shadow var(--transition-base);
 }
 
 .testimonial-card:hover {
@@ -467,6 +562,11 @@
     max-width: 100%;
   }
 
+  .hero__tagline {
+    max-width: 100%;
+    text-align: left;
+  }
+
   .hero__actions {
     justify-content: center;
   }
@@ -551,7 +651,30 @@
 
 @media (max-width: 480px) {
   .hero__subtitle {
-    margin-bottom: 28px;
+    margin-bottom: 0;
+  }
+
+  .hero__tagline {
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+
+  .hero__tagline-badge {
+    display: none;
+  }
+
+  .hero__tagline-body {
+    gap: 10px;
+    padding: 12px 12px 12px 12px;
+  }
+
+  .hero__tagline-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .hero__tagline-main {
+    font-size: 13px;
   }
 
   .about__highlight {

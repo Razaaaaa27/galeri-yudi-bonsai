@@ -17,37 +17,43 @@
   min-width: 0;
 }
 
-.footer__brand-name {
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-green-deep);
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
+.footer__brand-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 0;
 }
 
-.footer__brand-desc {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: 20px;
+.footer__brand-logo {
+  width: auto;
+  height: auto;
+  max-height: 420px;
+  max-width: 300px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .footer__social {
   display: flex;
-  gap: 12px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .footer__social-link {
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px 6px 8px;
   border-radius: var(--radius-full);
   background-color: var(--color-white);
   border: 1px solid var(--color-border);
   color: var(--color-text-secondary);
+  font-size: 12px;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
+  width: fit-content;
 }
 
 .footer__social-link:hover {
@@ -61,6 +67,7 @@
 .footer__social-link svg {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 .footer__heading {
@@ -105,6 +112,21 @@ a.footer__link:hover {
   gap: 16px;
 }
 
+.footer__bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer__nametag {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
 /* ── Responsive ── */
 @media (max-width: 834px) {
   .footer__inner {
@@ -127,6 +149,19 @@ a.footer__link:hover {
     flex-direction: column;
     text-align: center;
     gap: 8px;
+  }
+
+  .footer__bottom-right {
+    justify-content: center;
+  }
+
+  .footer__brand-logo {
+    max-height: 260px;
+    max-width: 186px;
+  }
+
+  .footer__brand-row {
+    gap: 14px;
   }
 
   .footer__divider {
