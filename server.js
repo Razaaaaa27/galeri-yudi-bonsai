@@ -28,15 +28,30 @@ app.use(express.static(path.join(__dirname)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// Ensure uploads directory exists
+// Ensure uploads directory exists (local/dev only — see note near Multer config)
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (err) {
+    // On Vercel this directory is read-only outside /tmp — safe to ignore here,
+    // the real fix is the storage note below.
+    console.warn('⚠️ Could not create uploads dir (expected on Vercel):', err.message);
+  }
 }
 
 // ─────────────────────────────────────────────────────
 // MULTER CONFIG (Image Upload)
 // ─────────────────────────────────────────────────────
+// ⚠️ IMPORTANT — READ THIS:
+// This still writes to local disk (`uploadsDir`). That works when you run
+// `node server.js` on your own machine, but Vercel's filesystem is read-only
+// except for /tmp, and /tmp is wiped on every cold start — so uploaded images
+// WILL disappear in production on Vercel. This was already flagged in your
+// original deployment guide's troubleshooting table. It is not fixed by the
+// changes in this file — you still need to move image storage to Cloudinary
+// or Vercel Blob before uploads will persist reliably. Everything below keeps
+// working exactly as before for local development in the meantime.
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
@@ -64,16 +79,49 @@ const upload = multer({
 });
 
 // ─────────────────────────────────────────────────────
-// MONGODB CONNECTION & SCHEMA
+// MONGODB CONNECTION (serverless-safe: cached + awaited)
 // ─────────────────────────────────────────────────────
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/galeriyudi';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ Connected to MongoDB Atlas'))
-  .catch((err) => {
+// Cache the connection promise (not just the connection) across invocations.
+// On Vercel, a "warm" function instance can be reused for the next request,
+// so this avoids reconnecting every time — and awaiting the *promise* (not
+// just checking a boolean) means two requests arriving during a cold start
+// both wait for the same in-flight connection instead of racing.
+let cachedConnectionPromise = null;
+
+async function connectDB() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+  if (!cachedConnectionPromise) {
+    cachedConnectionPromise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false, // fail fast instead of the 10s buffering timeout you hit
+      serverSelectionTimeoutMS: 8000,
+    }).then((conn) => {
+      console.log('✅ Connected to MongoDB Atlas');
+      return conn;
+    }).catch((err) => {
+      cachedConnectionPromise = null; // allow retry on next request instead of staying broken
+      throw err;
+    });
+  }
+  return cachedConnectionPromise;
+}
+
+// Ensure DB is connected before ANY route handles a request.
+// This replaces the old top-level `mongoose.connect().catch(() => process.exit(1))`,
+// which is unsafe on Vercel — process.exit() inside a serverless function kills
+// that invocation abruptly and does nothing useful for the next request.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
     console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+    res.status(500).json({ error: 'Database tidak bisa diakses. Coba lagi sesaat lagi.' });
+  }
+});
 
 // Product Schema
 const productSchema = new mongoose.Schema({
@@ -430,7 +478,7 @@ if (fs.existsSync(frontendDist)) {
 }
 
 // ─────────────────────────────────────────────────────
-// GRACEFUL SHUTDOWN
+// GRACEFUL SHUTDOWN (local/dev only — Vercel manages its own lifecycle)
 // ─────────────────────────────────────────────────────
 process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down...');
@@ -446,7 +494,17 @@ process.on('SIGTERM', async () => {
 // ─────────────────────────────────────────────────────
 // START SERVER
 // ─────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🌿 Galeri Yudi Server running at http://localhost:${PORT}\n`);
-  seedProducts();
-});
+// `app.listen()` only runs when you execute `node server.js` directly
+// (local development). On Vercel, api/index.js requires this file and
+// uses the exported `app` as a serverless function — app.listen() never
+// runs there, Vercel's own runtime handles incoming requests instead.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🌿 Galeri Yudi Server running at http://localhost:${PORT}\n`);
+    connectDB().then(() => seedProducts()).catch((err) => {
+      console.error('❌ Initial MongoDB connection failed:', err.message);
+    });
+  });
+}
+
+module.exports = app;
