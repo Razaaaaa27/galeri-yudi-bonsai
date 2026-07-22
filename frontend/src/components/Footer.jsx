@@ -10,6 +10,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__col">
             <div className="footer__brand-row">
+              <div className="footer__brand-text">
+                <h3 className="footer__brand-name">Galeri Yudi</h3>
+                <p className="footer__brand-tagline">Spesialis tanaman bonsai & hias pilihan,<br />langsung dari tangan pecinta tanaman.</p>
+              </div>
               <div className="footer__social">
                 <a href="https://www.instagram.com/galeri_yudi/" target="_blank" rel="noopener noreferrer" className="footer__social-link" aria-label="Instagram">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
